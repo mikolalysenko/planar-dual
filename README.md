@@ -23,6 +23,7 @@ var edges = [
   [0, 3]
 ]
 
+//Compute dual graph
 console.log(getFaces(edges, positions))
 ```
 

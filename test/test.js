@@ -58,7 +58,10 @@ tape("planar-dual", function(t) {
   }
   var nedges = [ [0,1], [0,6] ].concat(c1.edges).concat(c2.edges)
   var npositions = [ [0,0] ].concat(c1.positions).concat(c2.positions)
-  console.log(getFaces(nedges, npositions))
+  compareCycles(getFaces(nedges, npositions), 
+    [ [ 0, 1, 2, 3, 4, 5, 1, 0, 6, 10, 9, 8, 7, 6 ],
+      [ 1, 5, 4, 3, 2 ],
+      [ 6, 7, 8, 9, 10 ] ])
 
   //Tri force!
   var tpositions = [
@@ -75,7 +78,10 @@ tape("planar-dual", function(t) {
     [0, 2],
     [0, 3]
   ]
-  console.log(getFaces(tedges, tpositions))
+  compareCycles(getFaces(tedges, tpositions), [ [ 0, 1, 2 ], [ 0, 2, 3 ], [ 0, 3, 1 ], [ 1, 3, 2 ] ])
+  
+  //Single vertex
+  compareCycles(getFaces([], [[0,0]]), [ [0] ])
 
 
   t.end()

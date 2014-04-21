@@ -21,6 +21,13 @@ function planarDual(cells, positions) {
 
   var cycles = []
 
+  //Add isolated vertices as trivial case
+  for(var i=0; i<numVertices; ++i) {
+    if(adj[0][i].length + adj[1][i].length === 0) {
+      cycles.push( [i] )
+    }
+  }
+
   //Remove a half edge
   function cut(c, i) {
     var a = adj[i][c[i]]
@@ -29,9 +36,16 @@ function planarDual(cells, positions) {
 
   //Find next vertex and cut edge
   function next(a, b) {
-    var nextCell = null
-    var nextVertex = a
-    var nextDir = 0
+    var nextCell, nextVertex, nextDir
+    for(var i=0; i<2; ++i) {
+      if(adj[i][b].length > 0) {
+        nextCell = adj[i][b][0]
+        nextDir = i
+        break
+      }
+    }
+    nextVertex = nextCell[nextDir^1]
+
     for(var dir=0; dir<2; ++dir) {
       var nbhd = adj[dir][b]
       for(var k=0; k<nbhd.length; ++k) {
