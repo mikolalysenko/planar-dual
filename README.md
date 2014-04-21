@@ -1,31 +1,28 @@
-graph-to-polyline
-=================
-Given a planar embedding of a graph, convert it into a collection of oriented cycles (polylines).
+planar-dual
+===========
+Given a planar embedding of a graph, find all faces.
 
 # Example
 
 ```javascript
-var getCycles = require("graph-to-polyline")
+var getFaces = require("planar-dual")
 ```
 
 # Install
 
 ```
-npm install graph-to-polyline
+npm install planar-dual
 ```
 
 # API
 
-#### `require("graph-to-polyline")(edges, positions)`
-Splits a graph into a collection of oriented loops
+#### `require("planar")(edges, positions)`
+Splits an embedded planar graph into a collection of faces
 
-* `cells` are the cells of complex
-* `numVertices` is the number of vertices in the complex
+* `edges` are the edges of the graph
+* `positions` are the locations of the vertices of the graph
 
-**Returns** An object with two properties:
-
-* `open` are the open loops (paths) in the cell complex
-* `closed` are the closed loops (cycles) in the cell complex
+**Returns** A list of faces of the graph represented as ordered lists of vertices
 
 # Credits
 (c) 2014 Mikola Lysenko. MIT License

@@ -31,10 +31,6 @@ function getLoops(cells, positions) {
   function next(a, b, dir) {
     //Get neighborhood
     var nbhd = adj[dir][b]
-    if(nbhd.length % 2 === 0) {
-      dir ^= 1
-      nbhd = adj[dir][b]
-    }
     if(nbhd.length === 0) {
       //This should never happen
       return b
@@ -62,44 +58,20 @@ function getLoops(cells, positions) {
     var e0 = adj[dir][v]
     var cycle = []
 
+
+    if(nbhd.length % 2 === 0) {
+      dir ^= 1
+      nbhd = adj[dir][b]
+    }
   }
 
   for(var i=0; i<numVertices; ++i) {
-
-  }
-
-  /*
-  //Extract all inner loops
-  for(var dir=0; dir<2; ++dir) {
-    for(var i=0; i<numVertices; ++i) {
-      //Walk from vertex i in v direction along loop
-      if(adj[dir][i].length > 0) {
-        var path = []
-        var e0 = adj[dir][i][0]
-        path.push(e0)
-        unlink(e0, dir)
-        var u = e0[i^1]
-        while(true) {
-          if(u === v) {
-            //Got a loop
-            break
-          }
-          var out = adj[dir][u]
-          if(out.length === 0) {
-            //Got a path, skip it
-            break
-          }
-
-          //Find next vertex along path
-
-        }
-
-        //Prune cactus spikes
-        trimCactus()
+    for(var j=0; j<2; ++j) {
+      while(adj[j][i].length > 0) {
+        extractCycle(i, j)
       }
     }
   }
-  */
 
   //Combine paths and loops together
   return cycles
