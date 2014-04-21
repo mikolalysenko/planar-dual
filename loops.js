@@ -1,10 +1,10 @@
 "use strict"
 
-module.exports = getLoops
+module.exports = planarDual
 
 var compareAngle = require("compare-angle")
 
-function getLoops(cells, positions) {
+function planarDual(cells, positions) {
 
   var numVertices = positions.length|0
   var numEdges = cells.length
@@ -28,47 +28,68 @@ function getLoops(cells, positions) {
   }
 
   //Find next vertex and cut edge
-  function next(a, b, dir) {
-    //Get neighborhood
-    var nbhd = adj[dir][b]
-    if(nbhd.length === 0) {
-      //This should never happen
-      return b
-    }
-    var nextCell = nbhd[0]
-    var nextVertex = nextCell[dir^1]
-    for(var k=1; k<nbhd.length; ++k) {
-      var e = nbhd[k]
-      var p = e[dir^1]
-      if(compareAngle(
-          positions[a], 
-          positions[b], 
-          positions[nextVertex],
-          positions[p]) > 0) {
-        nextCell = e
-        nextVertex = p
+  function next(a, b) {
+    var nextCell = null
+    var nextVertex = a
+    var nextDir = 0
+    for(var dir=0; dir<2; ++dir) {
+      var nbhd = adj[dir][b]
+      for(var k=0; k<nbhd.length; ++k) {
+        var e = nbhd[k]
+        var p = e[dir^1]
+        var cmp = compareAngle(
+            positions[a], 
+            positions[b], 
+            positions[nextVertex],
+            positions[p])
+        if(cmp > 0) {
+          nextCell = e
+          nextVertex = p
+          nextDir = dir
+        }
       }
     }
-    //Cut and return
-    cut(nextCell, dir)
+    if(nextCell) {
+      cut(nextCell, nextDir)
+    }
     return nextVertex
   }
 
   function extractCycle(v, dir) {
-    var e0 = adj[dir][v]
-    var cycle = []
-
-
-    if(nbhd.length % 2 === 0) {
-      dir ^= 1
-      nbhd = adj[dir][b]
+    var e0 = adj[dir][v][0]
+    var cycle = [v]
+    cut(e0, dir)
+    var u = e0[dir^1]
+    var d0 = dir
+    while(u !== v) {
+      cycle.push(u)
+      //If we hit a dead end, flip direction and walk back
+      if(adj[dir][u].length === 0) {
+        dir = dir^1
+      }
+      u = next(cycle[cycle.length-2], u, dir)
     }
+    return cycle
   }
 
   for(var i=0; i<numVertices; ++i) {
     for(var j=0; j<2; ++j) {
+      var pcycle = []
       while(adj[j][i].length > 0) {
-        extractCycle(i, j)
+        var ni = adj[0][i].length
+        var ncycle = extractCycle(i,j)
+        if(ncycle[1] === ncycle[ncycle.length-1]) {
+          //Glue together trivial cycles
+          pcycle.push.apply(pcycle, ncycle)
+        } else {
+          if(pcycle.length > 0) {
+            cycles.push(pcycle)
+          }
+          pcycle = ncycle
+        }
+      }
+      if(pcycle.length > 0) {
+        cycles.push(pcycle)
       }
     }
   }
