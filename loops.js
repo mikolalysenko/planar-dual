@@ -35,7 +35,7 @@ function planarDual(cells, positions) {
   }
 
   //Find next vertex and cut edge
-  function next(a, b) {
+  function next(a, b, noCut) {
     var nextCell, nextVertex, nextDir
     for(var i=0; i<2; ++i) {
       if(adj[i][b].length > 0) {
@@ -63,6 +63,9 @@ function planarDual(cells, positions) {
         }
       }
     }
+    if(noCut) {
+      return nextVertex
+    }
     if(nextCell) {
       cut(nextCell, nextDir)
     }
@@ -75,15 +78,29 @@ function planarDual(cells, positions) {
     cut(e0, dir)
     var u = e0[dir^1]
     var d0 = dir
-    while(u !== v) {
-      cycle.push(u)
-      //If we hit a dead end, flip direction and walk back
-      if(adj[dir][u].length === 0) {
-        dir = dir^1
+    while(true) {
+      while(u !== v) {
+        cycle.push(u)
+        u = next(cycle[cycle.length-2], u, false)
       }
-      u = next(cycle[cycle.length-2], u, dir)
+      if(adj[0][v].length + adj[1][v].length === 0) {
+        break
+      }
+      var a = cycle[cycle.length-1]
+      var b = v
+      var c = cycle[1]
+      var d = next(a, b, true)
+      if(compareAngle(positions[a], positions[b], positions[c], positions[d]) < 0) {
+        break
+      }
+      cycle.push(v)
+      u = next(a, b)
     }
     return cycle
+  }
+
+  function shouldGlue(pcycle, ncycle) {
+    return (ncycle[1] === ncycle[ncycle.length-1])
   }
 
   for(var i=0; i<numVertices; ++i) {
@@ -92,7 +109,7 @@ function planarDual(cells, positions) {
       while(adj[j][i].length > 0) {
         var ni = adj[0][i].length
         var ncycle = extractCycle(i,j)
-        if(ncycle[1] === ncycle[ncycle.length-1]) {
+        if(shouldGlue(pcycle, ncycle)) {
           //Glue together trivial cycles
           pcycle.push.apply(pcycle, ncycle)
         } else {

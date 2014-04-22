@@ -1,6 +1,6 @@
 {
   "name": "planar-dual",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Find the faces of a planar graph",
   "main": "loops.js",
   "directories": {
@@ -11,7 +11,11 @@
     "dup": "^0.0.0"
   },
   "devDependencies": {
-    "tape": "~2.12.3"
+    "tape": "~2.12.3",
+    "random-permutation": "0.0.0",
+    "dup": "0.0.0",
+    "invert-permutation": "^0.1.0",
+    "shuffle-array": "0.0.0"
   },
   "scripts": {
     "test": "tape test/*.js"
