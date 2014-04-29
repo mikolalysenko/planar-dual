@@ -1,6 +1,6 @@
 {
   "name": "planar-dual",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Find the faces of a planar graph",
   "main": "loops.js",
   "directories": {
@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "compare-angle": "^1.0.0",
-    "dup": "^0.0.0"
+    "dup": "^1.0.0"
   },
   "devDependencies": {
     "tape": "~2.12.3",
